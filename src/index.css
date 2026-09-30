@@ -1,0 +1,35 @@
+@import "tailwindcss";
+
+* , *::before, *::after {
+  font-family: Arial, Helvetica, sans-serif !important;
+}
+
+html, body {
+  font-family: Arial, Helvetica, sans-serif !important;
+  background-color: #f8fafc;
+  color: #1e293b;
+  -webkit-font-smoothing: antialiased;
+}
+
+button, input, optgroup, select, textarea, span, p, h1, h2, h3, h4, h5, h6, table, th, td, div {
+  font-family: Arial, Helvetica, sans-serif !important;
+}
+
+/* Force mono classes to Arial as well */
+.font-mono {
+  font-family: Arial, Helvetica, sans-serif !important;
+}
+
+/* Google Sheets style clean grid table styling */
+.sheet-table {
+  border-collapse: collapse;
+}
+
+.sheet-table th, .sheet-table td {
+  border-right: 1px solid #e2e8f0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.sheet-table th:last-child, .sheet-table td:last-child {
+  border-right: none;
+}

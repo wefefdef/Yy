@@ -1,0 +1,6 @@
+{
+  "name": "ApexCRM - Clean Full-Stack CRM",
+  "description": "A high-performance, real-time full-stack CRM web application powered by Firebase Firestore and Authentication with Google Sheets simplicity.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

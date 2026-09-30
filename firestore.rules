@@ -1,0 +1,9 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Permissive access for immediatecrm.com CRM persistence across all authenticated CRM sessions
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}
