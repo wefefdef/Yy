@@ -35,17 +35,17 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] flex flex-col justify-center items-center p-4">
+    <div className="min-h-screen bg-[#f8fafc] flex flex-col justify-center items-center p-4 font-sans">
       {/* Container */}
-      <div className="w-full max-w-md bg-white border border-[#cbd5e1] shadow-sm rounded p-8">
+      <div className="w-full max-w-md bg-white border border-[#e2e8f0] shadow-sm rounded-lg p-8">
         
         {/* Brand Header */}
         <div className="mb-6 text-center">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded bg-[#0f172a] text-white font-bold text-xl mb-3 shadow-xs">
+          <div className="inline-flex items-center justify-center w-11 h-11 rounded-lg bg-blue-600 text-white font-bold text-xl mb-3 shadow-xs">
             I
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-[#0f172a]">immediatecrm.com</h1>
-          <p className="text-xs text-[#64748b] mt-1 font-medium">Full-Stack Real-Time CRM • Powered by Firebase Firestore</p>
+          <h1 className="text-2xl font-bold tracking-tight text-blue-600">immediate</h1>
+          <p className="text-xs text-slate-400 mt-1 font-medium">CRM Workspace • Powered by Firebase Firestore</p>
         </div>
 
         {/* Error Alert */}
@@ -58,11 +58,11 @@ export const LoginPage: React.FC = () => {
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-[#475569] mb-1.5">
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
               Email Address
             </label>
             <div className="relative">
-              <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-[#94a3b8]">
+              <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
                 <Mail className="w-4 h-4" />
               </span>
               <input
@@ -71,17 +71,17 @@ export const LoginPage: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="name@company.com"
-                className="w-full pl-9 pr-3 py-2 bg-white border border-[#cbd5e1] rounded text-sm text-[#0f172a] focus:outline-none focus:border-[#2563eb]"
+                className="w-full pl-9 pr-3 py-2 bg-white border border-[#cbd5e1] rounded text-sm text-slate-800 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-[#475569] mb-1.5">
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
               Password
             </label>
             <div className="relative">
-              <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-[#94a3b8]">
+              <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
                 <Lock className="w-4 h-4" />
               </span>
               <input
@@ -90,7 +90,7 @@ export const LoginPage: React.FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full pl-9 pr-3 py-2 bg-white border border-[#cbd5e1] rounded text-sm text-[#0f172a] focus:outline-none focus:border-[#2563eb]"
+                className="w-full pl-9 pr-3 py-2 bg-white border border-[#cbd5e1] rounded text-sm text-slate-800 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
               />
             </div>
           </div>
@@ -98,21 +98,21 @@ export const LoginPage: React.FC = () => {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-2.5 px-4 bg-[#0f172a] hover:bg-[#1e293b] active:bg-[#020617] text-white font-semibold text-sm rounded transition-colors flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 shadow-xs"
+            className="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold text-sm rounded transition-colors flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 shadow-xs"
           >
             {isLoading ? (
               <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
             ) : (
               <>
-                <span>Sign In to immediatecrm.com</span>
+                <span>Sign In</span>
                 <ArrowRight className="w-4 h-4" />
               </>
             )}
           </button>
         </form>
 
-        <div className="mt-6 flex items-center justify-center gap-1.5 text-xs text-[#94a3b8]">
-          <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+        <div className="mt-6 flex items-center justify-center gap-1.5 text-xs text-slate-400">
+          <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
           <span>Connected to live Google Firebase Firestore</span>
         </div>
       </div>

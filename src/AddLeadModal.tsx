@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { X, UserPlus, AlertCircle, CheckCircle2, Lock } from 'lucide-react';
 import { createLeadInFirestore } from './leadService';
 import { useAuth } from './AuthContext';
+import { COUNTRIES, validatePhoneNumber } from './countryCodes';
 
 interface AddLeadModalProps {
   isOpen: boolean;
@@ -19,37 +20,62 @@ export const AddLeadModal: React.FC<AddLeadModalProps> = ({
   const { user } = useAuth();
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [email, setEmail] = useState('');
   const [country, setCountry] = useState('United States');
-  const [dateOfBirth, setDateOfBirth] = useState('');
+  const [dialCode, setDialCode] = useState('+1');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [email, setEmail] = useState('');
   const [passcode, setPasscode] = useState('');
+
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
 
   if (!isOpen) return null;
 
+  // Handle country change: automatically sync dial code
+  const handleCountryChange = (selectedCountryName: string) => {
+    setCountry(selectedCountryName);
+    const matched = COUNTRIES.find((c) => c.name === selectedCountryName);
+    if (matched) {
+      setDialCode(matched.dialCode);
+    }
+  };
+
+  // Handle dial code change
+  const handleDialCodeChange = (newDialCode: string) => {
+    setDialCode(newDialCode);
+    const matched = COUNTRIES.find((c) => c.dialCode === newDialCode);
+    if (matched) {
+      setCountry(matched.name);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg('');
     setSuccessMsg('');
 
-    // Validation
+    // 1. Name validation
     if (!firstName.trim() || !lastName.trim()) {
       setErrorMsg('First Name and Last Name are required.');
       return;
     }
-    if (!email.trim() || !email.includes('@')) {
-      setErrorMsg('A valid email address is required.');
-      return;
-    }
-    if (!phone.trim()) {
-      setErrorMsg('Phone Number is required.');
+
+    // 2. Email validation
+    const cleanEmail = email.trim();
+    if (!cleanEmail || !cleanEmail.includes('@') || !cleanEmail.includes('.')) {
+      setErrorMsg('Please enter a valid email address.');
       return;
     }
 
-    // Secret Passcode Verification
+    // 3. Phone validation with country code
+    const phoneValidation = validatePhoneNumber(dialCode, phoneNumber);
+    if (!phoneValidation.valid) {
+      setErrorMsg(phoneValidation.error || 'Please enter a valid phone number.');
+      return;
+    }
+
+    // 4. Owner authorization passcode verification
     if (passcode.trim() !== REQUIRED_PASSCODE) {
       setErrorMsg('Invalid authorization passcode.');
       return;
@@ -58,16 +84,14 @@ export const AddLeadModal: React.FC<AddLeadModalProps> = ({
     setSubmitting(true);
     try {
       const createdLead = await createLeadInFirestore({
-        firstName,
-        lastName,
-        phone,
-        email,
-        country: country || 'United States',
-        dateOfBirth: dateOfBirth || '1990-01-01',
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+        phone: phoneValidation.cleanFullNumber,
+        email: cleanEmail,
+        country: country.trim(),
         userEmail: user?.email || 'james@gmail.com',
       });
 
-      // Firebase confirmed the write
       setSuccessMsg(`Lead created successfully with ID: ${createdLead.cid}`);
       
       setTimeout(() => {
@@ -75,59 +99,62 @@ export const AddLeadModal: React.FC<AddLeadModalProps> = ({
         // Reset form
         setFirstName('');
         setLastName('');
-        setPhone('');
+        setPhoneNumber('');
         setEmail('');
         setCountry('United States');
-        setDateOfBirth('');
+        setDialCode('+1');
         setPasscode('');
         setSuccessMsg('');
         onClose();
-      }, 700);
+      }, 600);
     } catch (err: any) {
       console.error('Save failed:', err);
-      setErrorMsg('Unable to save. Please try again.');
+      setErrorMsg('Unable to save lead. Please try again.');
     } finally {
       setSubmitting(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40">
-      <div className="bg-white border border-[#cbd5e1] rounded w-full max-w-lg shadow-xl overflow-hidden font-sans">
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#cbd5e1] bg-[#f8fafc]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 font-sans">
+      <div className="bg-white border border-[#e2e8f0] rounded-lg w-full max-w-lg shadow-xl overflow-hidden">
+        
+        {/* Header (Blue & White Theme) */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#e2e8f0] bg-[#fafafa]">
           <div className="flex items-center gap-2">
-            <UserPlus className="w-5 h-5 text-[#0f172a]" />
-            <h2 className="text-base font-bold text-[#0f172a]">Add New Lead</h2>
+            <UserPlus className="w-5 h-5 text-blue-600" />
+            <h2 className="text-base font-bold text-slate-800">Add New Lead</h2>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="text-[#64748b] hover:text-[#0f172a] p-1 rounded hover:bg-slate-200 cursor-pointer"
+            className="text-slate-400 hover:text-slate-700 p-1 rounded hover:bg-slate-100 cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Content */}
+        {/* Content Form: First Name, Last Name, Country, Phone with Country Code, Email, and Owner Authorization Passcode */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          
           {errorMsg && (
-            <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-sm rounded flex items-center gap-2">
+            <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded flex items-center gap-2">
               <AlertCircle className="w-4 h-4 shrink-0" />
               <span>{errorMsg}</span>
             </div>
           )}
 
           {successMsg && (
-            <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm rounded flex items-center gap-2">
+            <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs rounded flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
               <span>{successMsg}</span>
             </div>
           )}
 
-          <div className="grid grid-cols-2 gap-4">
+          {/* First Name & Last Name */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-[#475569] mb-1">
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">
                 First Name *
               </label>
               <input
@@ -136,12 +163,12 @@ export const AddLeadModal: React.FC<AddLeadModalProps> = ({
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
                 placeholder="e.g. John"
-                className="w-full px-3 py-2 bg-white border border-[#cbd5e1] rounded text-sm text-[#0f172a] focus:outline-none focus:border-[#2563eb]"
+                className="w-full px-3 py-2 bg-white border border-[#cbd5e1] rounded text-xs text-slate-800 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-[#475569] mb-1">
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">
                 Last Name *
               </label>
               <input
@@ -150,73 +177,83 @@ export const AddLeadModal: React.FC<AddLeadModalProps> = ({
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
                 placeholder="e.g. Smith"
-                className="w-full px-3 py-2 bg-white border border-[#cbd5e1] rounded text-sm text-[#0f172a] focus:outline-none focus:border-[#2563eb]"
+                className="w-full px-3 py-2 bg-white border border-[#cbd5e1] rounded text-xs text-slate-800 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
               />
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-[#475569] mb-1">
-                Phone Number *
-              </label>
+          {/* Country Selection */}
+          <div>
+            <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">
+              Country *
+            </label>
+            <select
+              value={country}
+              onChange={(e) => handleCountryChange(e.target.value)}
+              className="w-full px-3 py-2 bg-white border border-[#cbd5e1] rounded text-xs text-slate-800 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 cursor-pointer"
+            >
+              {COUNTRIES.map((c) => (
+                <option key={c.name} value={c.name}>
+                  {c.name} ({c.dialCode})
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Phone Number with all country code dropdown and validation */}
+          <div>
+            <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">
+              Phone Number with Country Code *
+            </label>
+            <div className="flex gap-2">
+              {/* Dial Code Selector */}
+              <select
+                value={dialCode}
+                onChange={(e) => handleDialCodeChange(e.target.value)}
+                className="w-36 px-2.5 py-2 bg-white border border-[#cbd5e1] rounded text-xs text-slate-800 focus:outline-none focus:border-blue-500 cursor-pointer shrink-0"
+              >
+                {COUNTRIES.map((c) => (
+                  <option key={`${c.code}-${c.dialCode}`} value={c.dialCode}>
+                    {c.dialCode} ({c.name})
+                  </option>
+                ))}
+              </select>
+
+              {/* Number digits input */}
               <input
                 type="tel"
                 required
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="+1 555-0199"
-                className="w-full px-3 py-2 bg-white border border-[#cbd5e1] rounded text-sm text-[#0f172a] focus:outline-none focus:border-[#2563eb]"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                placeholder="Phone digits (e.g. 5550199)"
+                className="flex-1 px-3 py-2 bg-white border border-[#cbd5e1] rounded text-xs text-slate-800 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
               />
             </div>
-
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-[#475569] mb-1">
-                Email *
-              </label>
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="john.smith@gmail.com"
-                className="w-full px-3 py-2 bg-white border border-[#cbd5e1] rounded text-sm text-[#0f172a] focus:outline-none focus:border-[#2563eb]"
-              />
-            </div>
+            <p className="text-[11px] text-slate-400 mt-1">
+              Selected: <strong className="text-blue-600 font-semibold">{dialCode}</strong> ({country}). Only verified numeric digits accepted.
+            </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-[#475569] mb-1">
-                Country
-              </label>
-              <input
-                type="text"
-                value={country}
-                onChange={(e) => setCountry(e.target.value)}
-                placeholder="United States"
-                className="w-full px-3 py-2 bg-white border border-[#cbd5e1] rounded text-sm text-[#0f172a] focus:outline-none focus:border-[#2563eb]"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-[#475569] mb-1">
-                Date of Birth
-              </label>
-              <input
-                type="date"
-                value={dateOfBirth}
-                onChange={(e) => setDateOfBirth(e.target.value)}
-                className="w-full px-3 py-2 bg-white border border-[#cbd5e1] rounded text-sm text-[#0f172a] focus:outline-none focus:border-[#2563eb]"
-              />
-            </div>
+          {/* Email Address */}
+          <div>
+            <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">
+              Email Address *
+            </label>
+            <input
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="e.g. john.smith@company.com"
+              className="w-full px-3 py-2 bg-white border border-[#cbd5e1] rounded text-xs text-slate-800 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            />
           </div>
 
-          {/* Authorization Passcode field */}
-          <div className="pt-2">
-            <label className="block text-xs font-bold uppercase tracking-wider text-[#475569] mb-1 flex items-center gap-1.5">
-              <Lock className="w-3.5 h-3.5 text-[#64748b]" />
-              <span>Passcode Authorization *</span>
+          {/* Authorization Passcode */}
+          <div>
+            <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1 flex items-center gap-1">
+              <Lock className="w-3.5 h-3.5 text-slate-500" />
+              <span>Authorization Passcode *</span>
             </label>
             <input
               type="password"
@@ -224,23 +261,23 @@ export const AddLeadModal: React.FC<AddLeadModalProps> = ({
               value={passcode}
               onChange={(e) => setPasscode(e.target.value)}
               placeholder="Enter passcode"
-              className="w-full px-3 py-2 bg-white border border-[#cbd5e1] rounded text-sm text-[#0f172a] focus:outline-none focus:border-[#2563eb]"
+              className="w-full px-3 py-2 bg-white border border-[#cbd5e1] rounded text-xs text-slate-800 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
             />
           </div>
 
           {/* Footer buttons */}
-          <div className="pt-4 border-t border-[#cbd5e1] flex items-center justify-end gap-3">
+          <div className="pt-4 border-t border-[#e2e8f0] flex items-center justify-end gap-3">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-[#475569] hover:bg-slate-100 rounded border border-[#cbd5e1] cursor-pointer"
+              className="px-4 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded border border-[#cbd5e1] cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={submitting}
-              className="px-5 py-2 text-sm font-semibold text-white bg-[#0f172a] hover:bg-[#1e293b] rounded cursor-pointer disabled:opacity-50 flex items-center gap-2"
+              className="px-4 py-1.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800 rounded cursor-pointer disabled:opacity-50 flex items-center gap-2 transition-colors shadow-2xs"
             >
               {submitting ? (
                 <>
@@ -253,6 +290,7 @@ export const AddLeadModal: React.FC<AddLeadModalProps> = ({
             </button>
           </div>
         </form>
+
       </div>
     </div>
   );

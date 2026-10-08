@@ -34,7 +34,7 @@ export async function createLeadInFirestore(data: {
   phone: string;
   email: string;
   country: string;
-  dateOfBirth: string;
+  dateOfBirth?: string;
   userEmail: string;
 }): Promise<Lead> {
   const counterRef = doc(db, METADATA_COLLECTION, COUNTERS_DOC);
@@ -63,7 +63,7 @@ export async function createLeadInFirestore(data: {
       phone: data.phone.trim(),
       email: data.email.trim(),
       country: data.country.trim(),
-      dateOfBirth: data.dateOfBirth.trim(),
+      dateOfBirth: data.dateOfBirth ? data.dateOfBirth.trim() : '',
       currentStatus: 'New' as LeadStatus,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),

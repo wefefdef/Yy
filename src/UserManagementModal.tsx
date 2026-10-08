@@ -162,20 +162,20 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40">
-      <div className="bg-white border border-[#cbd5e1] rounded w-full max-w-lg shadow-xl overflow-hidden font-sans">
+      <div className="bg-white border border-[#e2e8f0] rounded-lg w-full max-w-lg shadow-xl overflow-hidden font-sans">
         
         {/* Modal Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#cbd5e1] bg-[#f8fafc]">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#e2e8f0] bg-[#fafafa]">
           <div className="flex items-center gap-2">
-            <Users className="w-5 h-5 text-[#0f172a]" />
-            <h2 className="text-base font-bold text-[#0f172a]">
+            <Users className="w-5 h-5 text-blue-600" />
+            <h2 className="text-base font-bold text-slate-800">
               {isUnlocked ? 'CRM User Management' : 'Owner Authorization Required'}
             </h2>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="text-[#64748b] hover:text-[#0f172a] p-1 rounded hover:bg-slate-200 cursor-pointer"
+            className="text-slate-400 hover:text-slate-700 p-1 rounded hover:bg-slate-100 cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -184,8 +184,8 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
         {/* STEP 1: Passcode Gate */}
         {!isUnlocked ? (
           <form onSubmit={handleUnlock} className="p-6 space-y-4">
-            <div className="p-3 bg-slate-50 border border-[#cbd5e1] rounded text-xs text-[#475569] flex items-center gap-2">
-              <Lock className="w-4 h-4 text-[#0f172a] shrink-0" />
+            <div className="p-3 bg-blue-50/50 border border-blue-200 rounded text-xs text-slate-700 flex items-center gap-2">
+              <Lock className="w-4 h-4 text-blue-600 shrink-0" />
               <span>Please enter owner passcode to manage CRM login accounts.</span>
             </div>
 
@@ -197,7 +197,7 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
             )}
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-[#475569] mb-1">
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">
                 Owner Passcode
               </label>
               <input
@@ -207,7 +207,7 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                 value={passcodeInput}
                 onChange={(e) => setPasscodeInput(e.target.value)}
                 placeholder="Enter passcode"
-                className="w-full px-3 py-2 bg-white border border-[#cbd5e1] rounded text-sm text-[#0f172a] focus:outline-none focus:border-[#2563eb]"
+                className="w-full px-3 py-2 bg-white border border-[#cbd5e1] rounded text-sm text-slate-800 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
               />
             </div>
 
@@ -215,13 +215,13 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 text-xs font-medium text-[#475569] hover:bg-slate-100 rounded border border-[#cbd5e1] cursor-pointer"
+                className="px-4 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded border border-[#cbd5e1] cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 text-xs font-bold text-white bg-[#0f172a] hover:bg-[#1e293b] rounded cursor-pointer"
+                className="px-4 py-1.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded cursor-pointer transition-colors shadow-2xs"
               >
                 Authorize
               </button>
@@ -246,16 +246,16 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
             )}
 
             {/* Add User Section */}
-            <div className="border border-[#cbd5e1] rounded p-4 bg-[#f8fafc]">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-[#0f172a] mb-3 flex items-center gap-1.5">
-                <UserPlus className="w-4 h-4 text-[#0f172a]" />
+            <div className="border border-[#e2e8f0] rounded-lg p-4 bg-[#f8fafc]">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-3 flex items-center gap-1.5">
+                <UserPlus className="w-4 h-4 text-blue-600" />
                 <span>Add Login Credentials</span>
               </h3>
 
               <form onSubmit={handleAddUser} className="space-y-3">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-[11px] font-bold text-[#475569] uppercase mb-1">
+                    <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1">
                       Email (Gmail) *
                     </label>
                     <input
@@ -264,11 +264,11 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                       value={newEmail}
                       onChange={(e) => setNewEmail(e.target.value)}
                       placeholder="e.g. user@gmail.com"
-                      className="w-full px-3 py-1.5 bg-white border border-[#cbd5e1] rounded text-xs text-[#0f172a] focus:outline-none focus:border-[#2563eb]"
+                      className="w-full px-3 py-1.5 bg-white border border-[#cbd5e1] rounded text-xs text-slate-800 focus:outline-none focus:border-blue-500"
                     />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-bold text-[#475569] uppercase mb-1">
+                    <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1">
                       Password *
                     </label>
                     <input
@@ -277,7 +277,7 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
                       placeholder="e.g. 123"
-                      className="w-full px-3 py-1.5 bg-white border border-[#cbd5e1] rounded text-xs text-[#0f172a] focus:outline-none focus:border-[#2563eb]"
+                      className="w-full px-3 py-1.5 bg-white border border-[#cbd5e1] rounded text-xs text-slate-800 focus:outline-none focus:border-blue-500"
                     />
                   </div>
                 </div>
@@ -286,7 +286,7 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                   <button
                     type="submit"
                     disabled={addingUser}
-                    className="px-4 py-1.5 text-xs font-bold text-white bg-[#0f172a] hover:bg-[#1e293b] rounded cursor-pointer disabled:opacity-50 flex items-center gap-1.5"
+                    className="px-4 py-1.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded cursor-pointer disabled:opacity-50 flex items-center gap-1.5 transition-colors shadow-2xs"
                   >
                     {addingUser ? 'Adding...' : '+ Add User'}
                   </button>
@@ -297,18 +297,18 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
             {/* Active Users Table */}
             <div>
               <div className="flex items-center justify-between mb-2">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-[#475569]">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700">
                   Authorized Users ({users.length})
                 </h3>
-                <span className="text-[11px] text-[#64748b]">Only these accounts can sign in</span>
+                <span className="text-[11px] text-slate-400">Only these accounts can sign in</span>
               </div>
 
               {loadingUsers ? (
-                <div className="py-6 text-center text-xs text-[#64748b]">Loading users...</div>
+                <div className="py-6 text-center text-xs text-slate-400">Loading users...</div>
               ) : (
-                <div className="border border-[#cbd5e1] rounded overflow-hidden">
+                <div className="border border-[#e2e8f0] rounded overflow-hidden">
                   <table className="w-full text-xs text-left border-collapse">
-                    <thead className="bg-[#f8fafc] border-b border-[#cbd5e1] text-[#475569] font-bold uppercase">
+                    <thead className="bg-[#fafafa] border-b border-[#e2e8f0] text-slate-600 font-semibold uppercase">
                       <tr>
                         <th className="py-2 px-3">Name</th>
                         <th className="py-2 px-3">Email</th>
@@ -319,9 +319,9 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                     <tbody className="divide-y divide-[#e2e8f0]">
                       {users.map((u) => (
                         <tr key={u.id} className="hover:bg-slate-50">
-                          <td className="py-2.5 px-3 font-bold text-[#0f172a]">{u.name}</td>
-                          <td className="py-2.5 px-3 text-[#334155]">{u.email}</td>
-                          <td className="py-2.5 px-3 text-[#64748b]">{u.password}</td>
+                          <td className="py-2.5 px-3 font-semibold text-slate-800">{u.name}</td>
+                          <td className="py-2.5 px-3 text-blue-600">{u.email}</td>
+                          <td className="py-2.5 px-3 text-slate-500 font-mono text-[11px]">{u.password}</td>
                           <td className="py-2.5 px-3 text-right">
                             <button
                               type="button"
@@ -347,7 +347,7 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
 
             {/* Passcode Confirmation Prompt for User Deletion */}
             {userToDelete && (
-              <div className="p-4 bg-rose-50 border border-rose-200 rounded space-y-3">
+              <div className="p-4 bg-rose-50 border border-rose-200 rounded-lg space-y-3">
                 <div className="flex items-center gap-1.5 text-rose-800 font-bold text-xs">
                   <ShieldAlert className="w-4 h-4 text-rose-600" />
                   <span>Remove User: {userToDelete.email}</span>
@@ -366,7 +366,7 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                     value={deletePasscode}
                     onChange={(e) => setDeletePasscode(e.target.value)}
                     placeholder="Enter passcode"
-                    className="px-2.5 py-1.5 bg-white border border-rose-300 rounded text-xs text-[#0f172a] focus:outline-none focus:border-rose-600 flex-1"
+                    className="px-2.5 py-1.5 bg-white border border-rose-300 rounded text-xs text-slate-800 focus:outline-none focus:border-rose-600 flex-1"
                   />
                   <button
                     type="button"
@@ -392,11 +392,11 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
             )}
 
             {/* Footer close button */}
-            <div className="pt-2 border-t border-[#cbd5e1] flex justify-end">
+            <div className="pt-2 border-t border-[#e2e8f0] flex justify-end">
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 text-xs font-medium text-[#475569] hover:bg-slate-100 rounded border border-[#cbd5e1] cursor-pointer"
+                className="px-4 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded border border-[#cbd5e1] cursor-pointer"
               >
                 Close
               </button>
